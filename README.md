@@ -138,3 +138,7 @@ The repository includes production security rules:
 - **Offline / Standalone Fallback**: Includes pre-seeded municipal complaints (`CR-1024`, `CR-1025`, `CR-1026`, `CR-1027`, `CR-1028`, `CR-1022`, `CR-1021`, `CR-1019`) matching the design specifications, allowing full interactive testing even before Firebase API keys are linked.
 - **Client-Side Image Compression**: Photos taken on mobile cameras are automatically compressed via HTML5 Canvas before uploading.
 - **Responsive Layout**: Designed for mobile smartphones (iOS Safari, Android Chrome), tablets, and desktop displays.
+
+# CivicResolve
+
+🌐 **Live Website:** https://civicresolve-77396.web.app
