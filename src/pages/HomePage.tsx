@@ -8,23 +8,24 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+  // Initial statistics set to zero for clean platform deployment
   const [stats, setStats] = useState<ComplaintStats>({
-    total: 128,
-    reported: 40,
-    inProgress: 34,
-    resolved: 86,
-    criticalOpen: 8
+    total: 0,
+    reported: 0,
+    inProgress: 0,
+    resolved: 0,
+    criticalOpen: 0
   });
 
   useEffect(() => {
+    // Connect directly to live database records without mock defaults
     getComplaintStats().then((data) => {
-      // If we have custom complaints, we blend with official display stats
       setStats({
-        total: Math.max(128, data.total),
-        reported: Math.max(40, data.reported),
-        inProgress: Math.max(34, data.inProgress), // In 1_Home.png: 34 In Progress, 86 Resolved, 8 Critical Open
-        resolved: Math.max(86, data.resolved),
-        criticalOpen: Math.max(8, data.criticalOpen)
+        total: data.total,
+        reported: data.reported,
+        inProgress: data.inProgress,
+        resolved: data.resolved,
+        criticalOpen: data.criticalOpen
       });
     });
   }, []);

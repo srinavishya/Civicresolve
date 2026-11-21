@@ -13,7 +13,7 @@ export function App() {
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [lastSubmittedComplaint, setLastSubmittedComplaint] = useState<Complaint | null>(null);
-  const [selectedTrackingId, setSelectedTrackingId] = useState<string | undefined>('CR-1024');
+  const [selectedTrackingId, setSelectedTrackingId] = useState<string | undefined>(undefined);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
     return sessionStorage.getItem('civicresolve_admin_auth') === 'true';
   });

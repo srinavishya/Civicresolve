@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Complaint, ComplaintPriority, ComplaintStatus } from '../types';
+import { Complaint, ComplaintStatus } from '../types';
 import { PriorityBadge } from '../components/PriorityBadge';
 import { AdminDetailModal } from '../components/AdminDetailModal';
 import { getAllComplaints, updateComplaintAdmin } from '../services/storageService';
@@ -47,11 +47,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
     await loadComplaints();
   };
 
-  // Stats calculation matching 6_Admin_Dashboard.png
-  const totalCount = Math.max(128, complaints.length);
-  const reportedCount = Math.max(40, complaints.filter(c => c.status === 'Reported').length);
-  const inProgressCount = Math.max(34, complaints.filter(c => c.status === 'In Progress').length);
-  const resolvedCount = Math.max(54, complaints.filter(c => c.status === 'Resolved').length);
+  // Stats calculation connected to actual complaint records (defaults to 0 when empty)
+  const totalCount = complaints.length;
+  const reportedCount = complaints.filter(c => c.status === 'Reported').length;
+  const inProgressCount = complaints.filter(c => c.status === 'In Progress').length;
+  const resolvedCount = complaints.filter(c => c.status === 'Resolved').length;
 
   // Filtered rows
   const filteredList = complaints.filter(c => {
@@ -160,36 +160,44 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
                 </tr>
               </thead>
               <tbody>
-                {filteredList.map((c) => (
-                  <tr
-                    key={c.id}
-                    onClick={() => setSelectedComplaint(c)}
-                    className="table-row-clickable"
-                  >
-                    <td className="cell-id">{c.id}</td>
-                    <td className="cell-title">{c.title}</td>
-                    <td className="cell-location">{c.location}</td>
-                    <td className="cell-category">{c.category}</td>
-                    <td className="cell-priority">
-                      <PriorityBadge priority={c.priority} />
-                    </td>
-                    <td className="cell-dept">{c.department}</td>
-                    <td className="cell-status" onClick={(e) => e.stopPropagation()}>
-                      <div className="status-dropdown-wrapper">
-                        <select
-                          value={c.status}
-                          onChange={(e) => handleQuickStatusChange(e as any, c.id, e.target.value as ComplaintStatus)}
-                          className="status-inline-select"
-                        >
-                          <option value="Reported">Reported</option>
-                          <option value="In Progress">In Progress</option>
-                          <option value="Resolved">Resolved</option>
-                        </select>
-                        <ChevronDown size={14} className="status-caret" />
-                      </div>
+                {filteredList.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
+                      No complaints found in database.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredList.map((c) => (
+                    <tr
+                      key={c.id}
+                      onClick={() => setSelectedComplaint(c)}
+                      className="table-row-clickable"
+                    >
+                      <td className="cell-id">{c.id}</td>
+                      <td className="cell-title">{c.title}</td>
+                      <td className="cell-location">{c.location}</td>
+                      <td className="cell-category">{c.category}</td>
+                      <td className="cell-priority">
+                        <PriorityBadge priority={c.priority} />
+                      </td>
+                      <td className="cell-dept">{c.department}</td>
+                      <td className="cell-status" onClick={(e) => e.stopPropagation()}>
+                        <div className="status-dropdown-wrapper">
+                          <select
+                            value={c.status}
+                            onChange={(e) => handleQuickStatusChange(e as any, c.id, e.target.value as ComplaintStatus)}
+                            className="status-inline-select"
+                          >
+                            <option value="Reported">Reported</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                          </select>
+                          <ChevronDown size={14} className="status-caret" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

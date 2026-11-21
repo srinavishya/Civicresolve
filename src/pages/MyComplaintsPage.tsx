@@ -3,7 +3,6 @@ import { Complaint, ComplaintStatus } from '../types';
 import { ComplaintCard } from '../components/ComplaintCard';
 import { TrackingTimeline } from '../components/TrackingTimeline';
 import { getAllComplaints, searchComplaints } from '../services/storageService';
-import { Search } from 'lucide-react';
 
 interface MyComplaintsPageProps {
   selectedComplaintId?: string;
@@ -17,7 +16,7 @@ export const MyComplaintsPage: React.FC<MyComplaintsPageProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'All' | ComplaintStatus>('All');
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   // Load complaints
   useEffect(() => {
@@ -37,10 +36,10 @@ export const MyComplaintsPage: React.FC<MyComplaintsPageProps> = ({
       } else {
         setSelectedComplaint(list[0] || null);
       }
-    } else if (!selectedComplaint && list.length > 0) {
-      // Default to CR-1024 as in 4_My_Complaints.png
-      const cr1024 = list.find(c => c.id === 'CR-1024');
-      setSelectedComplaint(cr1024 || list[0]);
+    } else if (list.length > 0) {
+      setSelectedComplaint(list[0]);
+    } else {
+      setSelectedComplaint(null);
     }
     setLoading(false);
   };
@@ -56,6 +55,8 @@ export const MyComplaintsPage: React.FC<MyComplaintsPageProps> = ({
     setComplaints(results);
     if (results.length > 0) {
       setSelectedComplaint(results[0]);
+    } else {
+      setSelectedComplaint(null);
     }
     setLoading(false);
   };
@@ -133,7 +134,7 @@ export const MyComplaintsPage: React.FC<MyComplaintsPageProps> = ({
         <div className="complaints-list-section">
           {filteredComplaints.length === 0 ? (
             <div className="empty-state-box">
-              <p>No complaints found matching your criteria.</p>
+              <p>No complaints registered yet. Use "Report Issue" to submit your first civic issue.</p>
             </div>
           ) : (
             filteredComplaints.map((c) => (
