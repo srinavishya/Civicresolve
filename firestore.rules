@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.admin == true ||
+        request.auth.token.email.matches('.*@civicresolve[.]gov[.]in') ||
+        request.auth.token.role == 'admin'
+      );
+    }
+
+    // Complaints collection
+    match /complaints/{complaintId} {
+      // Any citizen can submit a new complaint
+      allow create: if request.resource.data.keys().hasAll(['id', 'title', 'description', 'location', 'category', 'priority', 'status', 'createdAt'])
+                    && request.resource.data.status == 'Reported';
+
+      // Anyone can look up complaints by ID or read complaint status
+      allow read: if true;
+
+      // Only authorized administrators can update status, department, and add update history
+      allow update: if isAdmin();
+
+      // Deletions are forbidden to protect audit trail
+      allow delete: if false;
+    }
+
+    // Citizen devices lookup / activity collection
+    match /citizens/{citizenId} {
+      allow read, write: if request.auth != null && request.auth.uid == citizenId;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Complaint photograph uploads
+    match /complaints/{complaintId}/{fileName} {
+      // Allow reading images publicly
+      allow read: if true;
+
+      // Allow image uploads: must be image MIME type and under 5MB
+      allow create: if request.resource.contentType.matches('image/.*')
+                    && request.resource.size < 5 * 1024 * 1024;
+
+      // Prevent overwriting or deleting citizen evidence
+      allow update, delete: if request.auth != null && request.auth.token.admin == true;
+    }
+  }
+}
